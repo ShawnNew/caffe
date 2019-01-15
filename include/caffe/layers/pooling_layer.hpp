@@ -27,11 +27,11 @@ class PoolingLayer : public Layer<Dtype> {
   virtual inline const char* type() const { return "Pooling"; }
   virtual inline int ExactNumBottomBlobs() const { return 1; }
   virtual inline int MinTopBlobs() const { return 1; }
-  // MAX POOL layers can output an extra top blob for the mask;
+  // MAX PoolingLayers can output extra top blob for the mask and argmax count;
   // others can only output the pooled inputs.
   virtual inline int MaxTopBlobs() const {
     return (this->layer_param_.pooling_param().pool() ==
-            PoolingParameter_PoolMethod_MAX) ? 2 : 1;
+            PoolingParameter_PoolMethod_MAX) ? 3 : 1;
   }
 
  protected:
