@@ -243,6 +243,9 @@ void CuDNNDeconvolutionLayer<Dtype>::Reshape(
   size_t max_workspace = std::max(total_workspace_fwd,
                              total_workspace_bwd_data);
   max_workspace = std::max(max_workspace, total_workspace_bwd_filter);
+  
+  //make sure max_workspace is multiplies of 16
+  max_workspace = (max_workspace + 15) & size_t(-16);
   // ensure all groups have enough workspace
   size_t total_max_workspace = max_workspace *
                                (this->group_ * CUDNN_STREAMS_PER_GROUP);
@@ -274,6 +277,7 @@ void CuDNNDeconvolutionLayer<Dtype>::Reshape(
       // NULL out underlying data
       workspaceData = NULL;
       workspaceSizeInBytes = 0;
+      return;
     }
 
     // if we succeed in the allocation, set pointer aliases for workspaces
