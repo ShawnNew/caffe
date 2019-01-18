@@ -52,7 +52,8 @@ class AlphaPredictionLossLayer : public LossLayer<Dtype> {
     Blob<Dtype> diff_;
     double epsilon = 1e-6;
     vector<int> shape_img_;
-    vector<double> mask_;
+    vector<Dtype> mask_;
+    vector<Dtype> gt_;
     int num_pixels;
 };
 }  // namespace caffe

@@ -59,19 +59,26 @@ void AlphaPredictionLossLayer<Dtype>::Forward_cpu(
 template <typename Dtype>
 void AlphaPredictionLossLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
     const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom) {
+    // grad = diff / length
     for (int i = 0; i < 2; ++i) {
         if (propagate_down[i]) {
             const Dtype sign = (i == 0) ? 1 : -1;
-            // const Dtype alpha = sign * top[0]->cpu_diff()[0] / bottom[0]->num();
-            caffe_cpu_axpby(   // alpha*X + beta*Y
+            const Dtype alpha = sign / bottom[0]->num();
+            caffe_cpu_axpby(   // Y = alpha*X + beta*Y
                 bottom[i]->count(),              // count
-                sign,                              // alpha
+                alpha,                              // alpha
                 diff_.cpu_data(),                   // a
                 Dtype(0),                           // beta
                 bottom[i]->mutable_cpu_diff());  // b
-            // bottom[i]->mutable_cpu_diff() = sign * diff_.cpu_data();
         }
     }
 }
 
-}
+#ifdef CPU_ONLY
+STUB_GPU(AlphaPredictionLossLayer);
+#endif
+
+INSTANTIATE_CLASS(AlphaPredictionLossLayer);
+REGISTER_LAYER_CLASS(AlphaPredictionLoss);
+
+} // caffe namespace
