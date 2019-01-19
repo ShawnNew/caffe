@@ -43,15 +43,15 @@ template <typename Dtype>
 void AlphaPredictionLossLayer<Dtype>::Forward_cpu(
     const vector<Blob<Dtype>*>& bottom, const vector<Blob<Dtype>*>& top) {
     int count = bottom[0]->count();
-    Dtype* mul_ = NULL;
+    vector<Dtype> mul_;
     caffe_sub(
         count,
         bottom[0]->cpu_data(),
         gt_.data(),
         diff_.mutable_cpu_data()
     );
-    caffe_mul(count, diff_.cpu_data(), mask_.data(), mul_);  // multiply by mask
-    Dtype dot = caffe_cpu_dot(count, mul_, mul_);            // square and sum
+    caffe_mul(count, diff_.cpu_data(), mask_.data(), mul_.data());  // multiply by mask
+    Dtype dot = caffe_cpu_dot(count, mul_.data(), mul_.data());            // square and sum
     Dtype loss = dot / num_pixels / Dtype(2);
     top[0]->mutable_cpu_data()[0] = loss;
 }
