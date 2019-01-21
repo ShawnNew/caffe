@@ -37,8 +37,9 @@ class AlphaPredictionLossLayer : public LossLayer<Dtype> {
      * Because only the first bottom blob is used to update the weights when training.
      * So there is no need to override the AllowForceBackward function.
      */
-    double alpha_loss(Dtype pred); // compute the loss and give value to diff_
-
+    virtual inline bool AllowForceBackward(const int bottom_index) const {
+      return true;
+    }
   protected:
     virtual void Forward_cpu(const vector<Blob<Dtype>*>& bottom,
         const vector<Blob<Dtype>*>& top);
@@ -50,7 +51,7 @@ class AlphaPredictionLossLayer : public LossLayer<Dtype> {
         const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom);
     
     Blob<Dtype> diff_;
-    double epsilon = 1e-6;
+    static const double epsilon = 1e-6;
     vector<int> shape_img_;
     vector<Dtype> mask_;
     vector<Dtype> gt_;
