@@ -1130,6 +1130,7 @@ message ReshapeParameter {
   //
   optional int32 axis = 2 [default = 0];
   optional int32 num_axes = 3 [default = -1];
+  optional int32 pixelshuffler = 4 [default = 1];
 }
 
 message ScaleParameter {
